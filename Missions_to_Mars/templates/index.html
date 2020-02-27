@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,39 +18,39 @@
       <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Scrape New Data</a></p>
     </div>
 
-    <div class="row">
+    <div class="row" id="craiglist-listings">
       <div class="col-md-12">
-        <h4 class="heading">Latest Mars News</h4>
-        <h6>{{news_title}}</h6>
-        <small>{{news_p}}</small>
+        <h3 class="heading">Latest Mars News</h4>
+        <h6>{{data.news_title}}</h6>
+        <small>{{data.news_p}}</small>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="craiglist-listings">
       <div class="col-md-8">
-        <h4 class="heading">Featured Mars Image</h4>
-        <img src="{{featured_image_url}}">
+        <h3 class="heading">Featured Mars Image</h4>
+        <img src="{{data.featured_image_url}}" style="width:750px;height:550px;">
       </div>
       <div class="col-md-4" style="border: 1px solid gray;">
-        <h5>Current Weather on Mars</h5>
-        <p>{{mars_weather}}</p>
+        <h5 class="heading">Current Weather on Mars</h5>
+        <p>{{data.mars_weather}}</p>
       </div>
-      <div class="col-md-4" style="border: 1px solid gray;">
-        <h5>Mars Facts</h5>
-        <p>{{html_table}}</p>
+      <!-- <div class="col-md-4" style="border: 1px solid gray;">
+        <h5 class="heading">Mars Facts</h5>
+        <p>{{data.html_table}}</p>
       </div>
-    </div>
-    <div class="row">
+    </div> -->
+    <!-- <div class="row">
       <div class="col-md-12">
-        <h4 class="heading" style="text-align: center;">Mars Hemispheres</h4>
+        <h3 class="heading" style="text-align: center;">Mars Hemispheres</h4>
       </div>
       {% for hemisphere_image_url in hemisphere_image_urls %}
         <div class="col-md-6" style="border: 1px solid gray;">
-          <img src='img_url'>
-          <h5>{{title}}</h5>
+          <img src='data.hemisphere_image_urls.img_url'>
+          <h5>{{data.hemisphere_image_urls.title}}</h5>
         </div>
       {% endfor %}
-    </div>
+    </div> -->
 
   </div>
 </body>
