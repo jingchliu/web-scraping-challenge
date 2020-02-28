@@ -6,14 +6,8 @@ from flask_pymongo import PyMongo
 import os
 import pandas as pd
 
-
-def init_browser():
-    executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
-    return Browser("chrome", **executable_path, headless=False)
-
 def scrape():
     data={}
-    browser=init_browser()
     news_url="https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
     response1 = requests.get(news_url)
     soup1 = bs(response1.text, 'lxml')
@@ -44,32 +38,44 @@ def scrape():
         mars_weather = tweet_text.replace(image_in_tweet_tag.text, '')
     data['mars_weather'] = mars_weather
 
-    # fact_url='https://space-facts.com/mars/'
-    # tables=pd.read_html(fact_url)
-    # df=tables[0]
-    # df.rename(columns={ df.columns[0]: "Description" }, inplace = True)
-    # df.rename(columns={ df.columns[1]: "Value" }, inplace = True)
-    # df.set_index('Description',inplace=True)
-    # html_table=df.to_html
-    # data ['html_table'] = html_table
+    fact_url='https://space-facts.com/mars/'
+    tables=pd.read_html(fact_url)
+    df=tables[0]
+    df.rename(columns={ df.columns[0]: "Description" }, inplace = True)
+    df.rename(columns={ df.columns[1]: "Value" }, inplace = True)
+    df.set_index('Description',inplace=True)
+    df.to_html('table.html')
+    soup_table = bs(open("table.html"), "html.parser")
+    print("Soup Table Type", type(soup_table))
+    th=[]
+    td=[]
+    for x in range(9):
+        th.append(soup_table.tbody.find_all('th')[x].text)
+        td.append(soup_table.tbody.find_all('td')[x].text)
+    table_title_1=soup_table.find_all('th')[1].text
+    table_title_2=soup_table.find_all('th')[2].text
+    data ['table_title_1'] = table_title_1
+    data ['table_title_2'] = table_title_2
+    data['th']=th
+    data['td']=td
 
-    # hemisphere_url='https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
-    # base_hemisohere_url='https://astrogeology.usgs.gov/'
-    # executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
-    # browser = Browser('chrome', **executable_path, headless=False)
-    # browser.visit(hemisphere_url)
-    # hemisphere_image_urls=[]
-    # html=browser.html
-    # soup=bs(html,'html.parser')
-    # descriptions=soup.find_all('div',class_='item')
-    # descriptions
-    # for description in descriptions:
-    #     title=description.find('h3').text.replace(' Enhanced','')
-    #     img_url=description.find('img',class_='thumb')['src']
-    #     list={
-    #         'title':title,
-    #         'img_url':base_hemisohere_url+img_url
-    #     }
-    #     hemisphere_image_urls.append(list)
-    # data['hemisphere_image_urls'] = hemisphere_image_urls
+    hemisphere_url='https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    executable_path = {'executable_path': '/usr/local/bin/chromedriver'}
+    browser = Browser('chrome', **executable_path, headless=True)
+    browser.visit(hemisphere_url)
+    hemisphere_image_urls=[]
+    html=browser.html
+    for x in range(1,5):
+        browser.click_link_by_partial_text('Enhanced')
+        soup=bs(browser.html,'html.parser')
+        #print('New HTML', browser.html)
+        title=soup.find('h2',class_='title').text.replace(' Enhanced','')
+        # print('New Title', type(title))
+        img_url=soup.find('div',class_='downloads').find('a')['href']
+        list={
+            'title':title,
+            'img_url':img_url
+        }
+        hemisphere_image_urls.append(list)
+    data['hemisphere_image_urls'] = hemisphere_image_urls
     return data
